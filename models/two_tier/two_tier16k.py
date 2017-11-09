@@ -162,7 +162,7 @@ STOP_ITERS = 100000 # Stop after this many iterations
 # TODO:
 PRINT_TIME = 90*60 # Print cost, generate samples, save model checkpoint every N seconds.
 STOP_TIME = 60*60*24*3 # Stop after this many seconds of actual training (not including time req'd to generate samples etc.)
-N_SEQS = 10  # Number of samples to generate every time monitoring.
+N_SEQS = 40  # Number of samples to generate every time monitoring.
 # TODO:
 RESULTS_DIR = 'results_2t'
 FOLDER_PREFIX = os.path.join(RESULTS_DIR, tag)
@@ -478,7 +478,7 @@ def generate_and_save_samples(tag):
 
     total_time = time()
     # Generate N_SEQS' sample files, each 5 seconds long
-    N_SECS = 15
+    N_SECS = 30
     LENGTH = N_SECS*BITRATE if not args.debug else 100
 
     samples = numpy.zeros((N_SEQS, LENGTH), dtype='int32')
@@ -502,10 +502,17 @@ def generate_and_save_samples(tag):
                 numpy.int32(t == FRAME_SIZE)
             )
 
-        samples[:, t] = sample_level_generate_fn(
-            frame_level_outputs[:, t % FRAME_SIZE],
-            samples[:, t-FRAME_SIZE:t],
-        )
+        try:
+            samples[:, t] = sample_level_generate_fn(
+                frame_level_outputs[:, t % FRAME_SIZE],
+                samples[:, t-FRAME_SIZE:t],
+            )
+        except:
+            print "FAILED TO SAMPLE", t-FRAME_SIZE, t, samples.shape, frame_level_outputs.shape
+            try:
+                print "H0.shape", h0.shape
+            except:
+                print "H0 error"
 
     total_time = time() - total_time
     log = "{} samples of {} seconds length generated in {} seconds."
