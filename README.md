@@ -15,7 +15,7 @@ Code accompanying the paper [SampleRNN: An Unconditional End-to-End Neural Audio
 - cuDNN 5105
 - Python 2.7.12
 - Numpy 1.11.1
-- Theano 0.8.2 (0.9 for WaveNet re-implementation)
+- Theano 0.9.0rc3 or 1.0
 - Lasagne 0.2.dev1
 
 ## Datasets
@@ -76,8 +76,7 @@ optional arguments:
                         Quantization in linear-scale, a-law-companding, or mu-
                         law compandig. With mu-/a-law quantization level shoud
                         be set as 256
-  --which_set {ONOM,BLIZZ,MUSIC}
-                        ONOM, BLIZZ, COBAIN, HENDRIX, MCRIDE, GLASS, TNGHT, TNGHT2 or MUSIC
+  --which_set WHICH_SET any preprocessed set in the datasets/music/ directory
   --batch_size {64,128,256}
                         size of mini-batch
   --debug               Debug mode
@@ -86,7 +85,7 @@ optional arguments:
 ```
 To run:
 ```
-$ THEANO_FLAGS=mode=FAST_RUN,device=gpu0,floatX=float32 python -u models/two_tier/two_tier32.py --exp BEST_2TIER --n_frames 64 --frame_size 16 --emb_size 256 --skip_conn False --dim 1024 --n_rnn 3 --rnn_type GRU --q_levels 256 --q_type linear --batch_size 128 --weight_norm True --learn_h0 True --which_set user_dataseet_name
+$ THEANO_FLAGS=mode=FAST_RUN,device=gpu0,floatX=float32 python -u models/two_tier/two_tier32.py --exp BEST_2TIER --n_frames 64 --frame_size 16 --emb_size 256 --skip_conn False --dim 1024 --n_rnn 3 --rnn_type GRU --q_levels 256 --q_type linear --batch_size 128 --weight_norm True --learn_h0 True --which_set user_dataset_name
 ```
 ### SampleRNN (3-tier)
 ```
