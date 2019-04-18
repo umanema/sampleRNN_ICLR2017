@@ -165,7 +165,8 @@ STOP_TIME = 60*60*24*3 # Stop after this many seconds of actual training (not in
 N_SEQS = 10  # Number of samples to generate every time monitoring.
 # TODO:
 RESULTS_DIR = 'results_2t'
-FOLDER_PREFIX = os.path.join(RESULTS_DIR, tag)
+#FOLDER_PREFIX = os.path.join(RESULTS_DIR, tag)
+FOLDER_PREFIX = RESULTS_DIR
 SEQ_LEN = N_FRAMES * FRAME_SIZE # Total length (# of samples) of each truncated BPTT sequence
 Q_ZERO = numpy.int32(Q_LEVELS//2) # Discrete value correponding to zero amplitude
 

@@ -10,16 +10,27 @@ print 'dl_dir is set to', DOWNLOAD_DIR
 #create the 
 print "creating directory for", DATASET_NAME
 DATASET_DIR = os.path.join(PWD, DATASET_NAME)
-os.makedirs(DATASET_DIR)
+
+if not os.path.exists(DATASET_NAME):
+    os.makedirs(DATASET_DIR)
+
 #move samples from directory to use dataset name
 print "moving samples"
 types = {'wav', "mp3"}
+files = []
 for t in types:
-    os.system('mv {}/*.{} {}/'.format(DOWNLOAD_DIR, t, DATASET_DIR))
+    print DOWNLOAD_DIR
+    for f in os.listdir(DOWNLOAD_DIR):
+        if f.endswith(t):
+            print ('move {}\\{} {}\\'.format(DOWNLOAD_DIR, f, DATASET_DIR))
+            os.system('move {}\\{} {}\\'.format(DOWNLOAD_DIR, f, DATASET_DIR))
 #run proprocess
 print "preprocessing"
 OUTPUT_DIR=os.path.join(DATASET_DIR, "parts")
-os.makedirs(OUTPUT_DIR)
+
+if not os.path.exists(OUTPUT_DIR):
+    os.makedirs(OUTPUT_DIR)
+
 # Step 1: write all filenames to a list
 with open(os.path.join(DATASET_DIR, 'preprocess_file_list.txt'), 'w') as f:
     for dirpath, dirnames, filenames in os.walk(DATASET_DIR):
@@ -29,12 +40,12 @@ with open(os.path.join(DATASET_DIR, 'preprocess_file_list.txt'), 'w') as f:
 
 # Step 2: concatenate everything into one massive wav file
 print "concatenate all files"
-os.system('pwd')
-os.system("ffmpeg -f concat -safe 0 -i {}/preprocess_file_list.txt {}/preprocess_all_audio.wav".format(DATASET_DIR, OUTPUT_DIR))
+os.system('cd')
+os.system("ffmpeg -f concat -safe 0 -i {}\\preprocess_file_list.txt {}\\preprocess_all_audio.wav".format(DATASET_DIR, OUTPUT_DIR))
 audio = "preprocess_all_audio.wav"
 print "get length"
 # # get the length of the resulting file
-length = float(subprocess.check_output('ffprobe -i {}/{} -show_entries format=duration -v quiet -of csv="p=0"'.format(OUTPUT_DIR, audio), shell=True))
+length = float(subprocess.check_output('ffprobe -i {}\\{} -show_entries format=duration -v quiet -of csv="p=0"'.format(OUTPUT_DIR, audio), shell=True))
 print length, "DURATION"
 print "print big file into chunks"
 # # Step 3: split the big file into 8-second chunks
@@ -42,17 +53,17 @@ print "print big file into chunks"
 '''
 for i in xrange(int((length//8)*3)-1):
     time = (i * 8 )/ 3
-    os.system('ffmpeg -ss {} -t 8 -i {}/preprocess_all_audio.wav -ac 1 -ab 16k -ar 16000 {}/p{}.flac'.format(time, OUTPUT_DIR, OUTPUT_DIR, i))
+    os.system('ffmpeg -ss {} -t 8 -i {}\\preprocess_all_audio.wav -ac 1 -ab 16k -ar 16000 {}\\p{}.flac'.format(time, OUTPUT_DIR, OUTPUT_DIR, i))
 '''
 size = 8
 num = 3200
 for i in xrange(0, num):
     time = i * ((length-size)/float(num))
-    os.system('ffmpeg -ss {} -t 8 -i {}/preprocess_all_audio.wav -ac 1 -ab 16k -ar 32000 {}/p{}.flac'.format(time, OUTPUT_DIR, OUTPUT_DIR, i))
+    os.system('ffmpeg -ss {} -t 8 -i {}\\preprocess_all_audio.wav -ac 1 -ab 16k -ar 32000 {}\\p{}.flac'.format(time, OUTPUT_DIR, OUTPUT_DIR, i))
 print "clean up"
 # # Step 4: clean up temp files
-os.system('rm {}/preprocess_all_audio.wav'.format(OUTPUT_DIR))
-os.system('rm {}/preprocess_file_list.txt'.format(DATASET_DIR))
+os.system('del {}\\preprocess_all_audio.wav'.format(OUTPUT_DIR))
+os.system('del {}\\preprocess_file_list.txt'.format(DATASET_DIR))
 print 'save as .npy'
 __RAND_SEED = 123
 def __fixed_shuffle(inp_list):
